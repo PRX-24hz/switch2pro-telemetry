@@ -13,8 +13,8 @@ authors:
   - family-names: "PRX-24hz"
     alias: "PRX-24hz"
     website: "https://github.com/PRX-24hz"
-repository-code: "https://github.com/PRX-24hz/switch2pro-charge-protocol"
-url: "https://github.com/PRX-24hz/switch2pro-charge-protocol"
+repository-code: "https://github.com/PRX-24hz/switch2pro-telemetry"
+url: "https://github.com/PRX-24hz/switch2pro-telemetry"
 license: MIT
 version: "1.0"
 date-released: "2026-10-25"
@@ -44,4 +44,4 @@ preferred-citation:
     - family-names: "PRX-24hz"
   year: 2026
   month: 10
-  url: "https://github.com/PRX-24hz/switch2pro-charge-protocol"
+  url: "https://github.com/PRX-24hz/switch2pro-telemetry"
