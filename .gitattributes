@@ -1,0 +1,7 @@
+# 统一行尾，避免 Windows 提交把整个仓库变成 CRLF 差异
+* text=auto eol=lf
+
+# 二进制/数据文件不做换行转换
+*.csv   -text
+*.pcap  -text
+*.png   -text

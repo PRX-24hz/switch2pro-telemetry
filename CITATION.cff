@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below — and please include the firmware version, topology and raw CSV you compared against, not just the conclusion."
+title: "Switch 2 Pro Controller (057E:2069) USB 0x05 report field notes"
+abstract: >-
+  Read-only reverse engineering of the Nintendo Switch 2 Pro Controller's USB HID report 0x05:
+  frame layout, a 32-bit 3 MHz-derived clock that wraps every 1,431,655.765 ms, the charge-status
+  bitfield, the full charging cycle with its 2.9 Hz chopping maintenance phase, gauge-reading
+  semantics, stick travel range, rumble power cost, and a complete 6-axis IMU (accel +/-8 g,
+  gyro +/-2000 dps) carried in the same report. All captures come from a single unit; a
+  reproduction procedure for other units is included.
+type: software
+authors:
+  - family-names: "PRX-24hz"
+    alias: "PRX-24hz"
+    website: "https://github.com/PRX-24hz"
+repository-code: "https://github.com/PRX-24hz/switch2pro-charge-protocol"
+url: "https://github.com/PRX-24hz/switch2pro-charge-protocol"
+license: MIT
+version: "1.0"
+date-released: "2026-10-25"
+keywords:
+  - Nintendo Switch 2 Pro Controller
+  - USB HID
+  - reverse engineering
+  - 0x05 report
+  - IMU
+  - accelerometer
+  - gyroscope
+  - battery gauge
+  - read-only
+identifiers:
+  - type: other
+    value: "057E:2069"
+    description: "USB VID:PID of the device under study"
+references:
+  - type: generic
+    title: "ndeadly/switch2_controller_research — commands.md and hid_reports.md"
+    url: "https://github.com/ndeadly/switch2_controller_research"
+    notes: "Field tables and command framing this work builds on; our IMU axis-orientation result was submitted there as issue #2."
+preferred-citation:
+  type: generic
+  title: "Switch 2 Pro Controller USB 0x05 report: frame layout, charging cycle and built-in IMU (v1.0)"
+  authors:
+    - family-names: "PRX-24hz"
+  year: 2026
+  month: 10
+  url: "https://github.com/PRX-24hz/switch2pro-charge-protocol"

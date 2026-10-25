@@ -1,0 +1,78 @@
+name: 复现报告（跨设备 / 跨固件）
+description: 用 tools/repro_capture.py 采集 30 分钟后提交结果，帮助验证时钟回绕点、状态位域等结论
+title: "[repro] <固件版本> · <线材/底座>"
+labels: ["reproduction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢贡献样本！请先阅读 [`REPRODUCE.md`](../REPRODUCE.md)。
+        采集命令：`python tools/repro_capture.py --minutes 30 --fw "<版本>" --note "<拓扑>"`
+
+  - type: input
+    id: firmware
+    attributes:
+      label: 手柄固件版本
+      description: Switch 2 → 设置 → 控制器与传感器 → 更新控制器 页面可看到（只读通道读不到，需手抄）
+      placeholder: "例如 1.1.5"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scenario
+    attributes:
+      label: 采集场景
+      options:
+        - A. 充电中挂着（电量任意）
+        - B. 满电维持态（红灯已灭）
+        - C. 低电充满（覆盖 0%→100%）
+    validations:
+      required: true
+
+  - type: input
+    id: topology
+    attributes:
+      label: 线材与底座
+      placeholder: "原装线 + 官方底座 / 第三方线直连主板"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: start_bars
+    attributes:
+      label: 起充电量格数（0~4）
+      options: ["0", "1", "2", "3", "4", "不确定"]
+
+  - type: textarea
+    id: verdicts
+    attributes:
+      label: 判定输出（粘贴终端最后一段）
+      description: 含 H1~H4 的 PASS / FAIL / INCONCLUSIVE 与状态字节普查
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: report_json
+    attributes:
+      label: repro_report.json 内容（可选但推荐）
+      description: 直接把文件内容粘进来；内含回绕事件的双向时刻与偏差
+      render: json
+
+  - type: checkboxes
+    id: confirms
+    attributes:
+      label: 确认
+      options:
+        - label: 全程未拔线/未让电脑睡眠（除非中途发生过离线，已在下方说明）
+          required: true
+        - label: 未使用任何会写入设备的工具（Steam 驱动初始化、厂商工具等）
+          required: true
+        - label: 我同意公开上述数据（不含个人信息）
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 其他说明
+      description: 例如采集中途掉线、LED 何时亮灭、充电器型号、是否与其他软件同时打开手柄

@@ -1,0 +1,99 @@
+# Changelog
+
+> [中文](CHANGELOG.md) · **English**
+
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
+[Semantic Versioning](https://semver.org/).
+
+---
+
+## v1.0 · 2026-10-25
+
+First proper release. Compared with the earlier drafts, **one core fact was overturned and one
+boundary was redrawn.**
+
+### New findings
+
+- **All 29 trailing bytes of `0x05` are accounted for**: a 4-byte microsecond timestamp starting at
+  `0x2B`, temperature at `0x2F` (`25 + raw/126.9` °C), and a 6-axis IMU at `0x31`–`0x3C`. `0x05` can
+  now be read as a complete telemetry frame.
+- **The built-in IMU is calibrated**: accel ±8 g, gyro ±2000 dps, right-handed, Z = face normal,
+  Y along the long axis toward the USB connector. Six-face method gives per-axis gains of
+  4090.8 / 4090.7 / 4096.3 LSB/g, mean **4092.6 (0.08 % below nominal)**; after tilt correction the
+  three axes agree to **0.14 %**. Z's zero offset was cross-checked using the fact that an offset
+  pushes both opposite faces the same way.
+- **The IMU is available from `0x05` alone** — `0x09` is not required. This overturns the implicit
+  premise that "IMU needs write access".
+- **Activation mechanism decoded**: commands go over the `MI_01` vendor interface; activation is a
+  one-shot switch. Software sends 19 subcommands; `0x0A`/`0x04` (report mode and feature mask) decide
+  the content, `0x0D` initialises USB.
+- **Host-side cross-check** ([Protocol §3](docs/protocol.en.md)): an SDL mapping string exported from
+  Steam decodes into the GUID structure (bus / CRC16 / VID / PID / version / driver signature), and
+  every button was cross-checked against our bitfield — `paddle1/paddle2` independently confirm the
+  GL/GR back buttons exist; also confirms **ZL/ZR are axes, not buttons in SDL**, `back` is Minus
+  (not Capture), and `SL/SR` are unmapped. Two exports are **byte-identical** (374 B / 30 fields) —
+  but only because SDL normalises its output (canonical keys alphabetical, extension keys appended),
+  not because the device is stable.
+- **Steam normalises the sticks (measured)** ([Protocol §2.1](docs/protocol.en.md)): pushing the left
+  stick in three stages gives raw travel 435 / 944 / 1605 → Steam displays ~10000 / ~20000 / 32767.
+  A ×16 linear map is ruled out; normalisation holds (implied full travel ≈1696 counts, matching our
+  measured 1605–1719). **This narrows our own claim**: 0.86 only affects raw 12-bit readers — through
+  Steam Input, full deflection is 1.00. Also confirmed that page shows **pre-deadzone** values, so the
+  8192 deadzone still cannot be verified from it.
+- **Gyro integral vs accelerometer: flips about Y** ([IMU §5.2b](docs/discovery-imu.en.md)): four flips
+  give ratios 1.080 / 0.995 / 1.027 / 1.029, weighted 1.028 → implied LSB 16.85; with §5.2's
+  16.44/16.35 the four estimates span **16.35–16.85 (16.384 ±3 %)**. The honest reading: not off by a
+  factor of two, but not pinned to 0.1 % either. Also confirms gyro Y and accelerometer Y are the same
+  axis (ay net change ≤784 LSB vs ax/az 3,400–7,600 during flips).
+- **External support for gyro noise and bias**: idle σ = 1.97 / 1.30 / 1.03 LSB (0.120 / 0.079 /
+  0.063 dps), the same order as the ±0.1 dps Steam's "Gyro Calibration" page shows — independent support
+  for LSB = 16.384. That page displays **residual after bias subtraction** (otherwise X would sit at
+  +0.5 dps), i.e. Steam applies the same correction our table does. **This also retracts our own
+  "bias is negligible"**: 0.49 dps integrates to 29.7 deg/min, so implementations must subtract it.
+- **A read-only version identifier**: `bcdDevice = 0x0201` (hidapi `release_number`), corroborated by
+  bytes `[12:14]` of the SDL GUID. It is **not** the firmware version string shown in the Switch UI
+  (public notes tag HIDMaestro's unit as `1.1.5`), and `data/DEVICE.md` spells out the difference.
+
+### Corrections (including retractions)
+
+| Former claim | Status |
+|---|---|
+| `0x05` **streams on power-up with no handshake** | **Wrong.** Opening a HID handle yields 0 frames; the device must be activated once by the host, after which it runs at 250 Hz |
+| "The read-only probe works standalone" | **Incomplete.** Reading is genuinely zero-write, but the **trigger** depends on the Steam client activating the device (login screen suffices, no sign-in needed) |
+| "The `0x09` IMU needs write access" | **Wrong.** The IMU is right there in `0x05` |
+| "`0x23+` is unresolved / safe to ignore" | Fully resolved, see above |
+| "Z's +73 offset is tilt folded into the zero point" | **Wrong** (a draft-era error). Corrected it grows to +102, and it predicts the six-face magnitudes 1.025 / 0.975 g |
+
+### Engineering
+
+- **Read-only boundary redrawn**: the 3 experimental scripts that do write are quarantined in
+  [`tools/write/`](tools/write/); `audit_readonly.py` now judges **by zone** — a write call in the
+  read-only zone fails the check, the write zone is listed but not judged. `hid_caps.py` and
+  `hid_descriptor.py` now open handles **read-only** instead of read+write.
+- 11 new tools (7 for the IMU pipeline, plus a USBPcap parser, an environment gate, a hotplug watcher
+  and a HID descriptor reader).
+- 7 new data files (including a 20,001-frame A/B, a 5,000-row formal calibration, and a full hotplug
+  trace).
+
+### Documentation
+
+- `docs/protocol.md` §1.4 rewritten from "suspected IMU" into a field table; new §1.5 "Activation".
+- New `docs/discovery-imu.md` (zh/en): how the discovery happened, the method, and a post-mortem of
+  three wrong attributions.
+- `data/DEVICE.md`: Hong Kong model, two-hub topology, 2026-10-25 timeline, activation precondition.
+- New `CITATION.cff` and this changelog.
+- All relative links and bilingual pairs verified (the counts change as content is added; check the
+  numbers at the time of your own run).
+
+### Upstream
+
+- IMU axis mapping and sign convention submitted to
+  [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2).
+
+---
+
+## Early drafts (2026-10-24 and before, unpublished)
+
+The bulk of the charging-protocol work (clock wrap constant, status bitfield, full charging cycle,
+reading semantics, stick range, rumble A/B) was produced here, with 7 self-retractions along the way.
+Evidence for each is in [`docs/daylog-2026-10-24.md`](docs/daylog-2026-10-24.md).
