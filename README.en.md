@@ -291,8 +291,12 @@ conclusion and then restored it through controlled experiments.
 
 **On "who was first"**: we **cannot confirm, and do not claim**, that we are the first to record
 these phenomena. This repo consistently writes "**no prior record found**", never "first discovered"
-— the latter is not falsifiable and should not be asserted by the author. If you know of an earlier
-public record, please open an issue and we will add the citation.
+— the latter is not falsifiable and should not be asserted by the author.
+This **cannot be settled by searching harder**: NDA-bound internal work, private-community discussion,
+and the same analysis filed under a different repo name or PID all sit structurally outside public
+search; our own pass covered only English/Chinese and a limited set of terms.
+Full note in [`docs/boundaries.en.md` §2.1](docs/boundaries.en.md); if you know of an earlier public
+record, please open an issue and we will add the citation.
 
 **Known engineering limitations** (these narrow the conclusions' scope — please read):
 

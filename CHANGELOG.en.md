@@ -81,6 +81,9 @@ boundary was redrawn.**
 - New `docs/discovery-imu.md` (zh/en): how the discovery happened, the method, and a post-mortem of
   three wrong attributions.
 - `data/DEVICE.md`: Hong Kong model, two-hub topology, 2026-10-25 timeline, activation precondition.
+- `docs/boundaries.md` gains §2.1 "Why 'no prior record found' is not 'first on the internet'":
+  four structural blind spots (NDA work, private communities, naming/PID differences, and the limits
+  of our own search), plus why the repo refuses to write "first discovered".
 - New `CITATION.cff` and this changelog.
 - All relative links and bilingual pairs verified (the counts change as content is added; check the
   numbers at the time of your own run).

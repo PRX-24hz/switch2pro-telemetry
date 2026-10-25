@@ -91,7 +91,33 @@ per report". If that refers to `0x05` over USB, it conflicts with this repo's "t
 a millisecond clock, +4 per frame". The likely explanation is that they counted the 8-bit counter of
 `0x09` on the BLE side, but **this has not been confirmed with the author** and is listed as an open item.
 
-### 2.1 Acknowledgements
+### 2.1 Why "no prior record found" is not "first on the internet"
+
+The sentence above ("no prior record found") reads easily as "we were first". **Those are very
+different claims**, and the gap is not one that more searching can close. Four kinds of record sit
+structurally outside public search:
+
+| # | Why it cannot be found | Can it ever be closed |
+|---|---|---|
+| 1 | **Work under NDA**: devkits go out to studios and accessory partners before launch, so the protocol has very likely been analysed already — just never published | structural, never |
+| 2 | **Private communities**: mainboard and protocol talk in Discord / Telegram / small forums is not indexed, and can easily predate any public repo | structural, never |
+| 3 | **Naming and PID differences**: the same analysis may live under another repo name, inside an issue or PR (`hid-nintendo`, SDL, Joy-Con RE branches), and engineering samples may use a **different PID** — searching `057E:2069` simply misses them | methodological; improvable, not guaranteed |
+| 4 | **The boundary of our own search**: one pass on 2026-10-24, mostly English and Chinese, with terms built around `1,431,655` / `0x05` / `clock wrap`. Japanese blogs, unindexed forums, and write-ups that use completely different words (say, just "controller battery") are out of view | **our own shortcoming — must be stated** |
+
+The first two are unfalsifiable, so they **cannot be used as evidence** — only as a reason not to
+assert. The third is a search method that can be improved. The fourth is our own limit.
+
+**So the policy does not change**: the repo writes "**no prior record found**", never "first
+discovered". This is not politeness — the payoff of the "first" label is close to zero while the cost
+is real: it ties a falsifiable factual claim to the whole document, and a single counterexample then
+makes everything else read as suspect. What deserves citation is the method, the data and the
+reproducibility, not a timestamp.
+
+> If you know of an earlier public record, please open an issue. **Proving us wrong is more valuable
+> than confirming we are right** — the former makes this document accurate, the latter only makes it
+> look good.
+
+### 2.2 Acknowledgements
 
 The report ID and field offsets build on public reverse engineering by `ndeadly`, `kennethreitz` and
 `darthcloud/BlueRetro #1249`; the clock wrap, status bitfields, full charging cycle, reading sawtooth
