@@ -123,6 +123,17 @@ The report ID and field offsets build on public reverse engineering by `ndeadly`
 `darthcloud/BlueRetro #1249`; the clock wrap, status bitfields, full charging cycle, reading sawtooth
 and the six-face IMU calibration were measured independently for this repo.
 
+**It is worth being precise about where the dependency stops**: what we took from prior work is only
+*where the fields are* — `0x05` is 64 bytes, buttons at `[5..8]`, sticks at `[11..16]`, gauge at
+`[0x20]`, status at `[0x22]`. We did not re-derive those; we used the tables.
+
+But *how those fields behave over time* is largely absent from prior docs and comes entirely from
+long-duration observation here: the 23.86-minute clock wrap constant, the status byte's bitfield
+semantics, the 2.9 Hz chopping maintenance after charging ends, the fact that the reading is not a
+voltage, the sticks using only 86 % of the range, and the trailing 29 bytes being timestamp +
+temperature + six axes. **The structure is inherited; the behaviour is measured.** That distinction
+determines how this report should be cited.
+
 **Giving back**: `hid_reports.md` marks the IMU axis orientation and sign convention as "to be
 determined empirically"; we determined it and submitted the result as
 [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2)

@@ -81,6 +81,15 @@ boundary was redrawn.**
 - New `docs/discovery-imu.md` (zh/en): how the discovery happened, the method, and a post-mortem of
   three wrong attributions.
 - `data/DEVICE.md`: Hong Kong model, two-hub topology, 2026-10-25 timeline, activation precondition.
+- **Fixed a post-hoc attribution**: `docs/discovery-imu.md` §8.4 used to say "the reason we started at
+  all" was ndeadly's field table marking everything after `0x23` as unknown — which contradicts §5.1
+  ("we had not seen that document when we did the calibration"). The real order: internal process
+  (you may not write "ignore" without falsifying it) drove the work to completion, and `hid_reports.md`
+  was read afterwards, when preparing the issue. Rewritten, with the contradiction spelled out.
+  This matters because "independent verification" is one of the few load-bearing claims here; getting
+  the order backwards voids it.
+- **Dependency boundary made explicit**: `docs/boundaries.md` §2.2 now states that what came from prior
+  work is only *where the fields are* (structure), while *how they behave over time* is all measured.
 - `docs/boundaries.md` gains §2.3: field-by-field comparison with the BLE-side project
   `XinHeLianSheng-Pro2-Bridge` (report layout / IMU sample order / microsecond timestamp / button bit
   order all match), plus a note on its 4095-based stick normalisation; also rewords one claim — the

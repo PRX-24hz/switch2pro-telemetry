@@ -689,9 +689,15 @@ What is still new here:
 | **Offset-base correction for the whole frame** | The ±1 offset caused by the report ID, and the re-identification of three previously misjudged fields (6.1, 6.2) |
 | **Independent verification of the activation sequence** | Captured on Windows 11 with Steam, matching `commands.md` command for command (8.1b) |
 
-The reason we started at all: `ndeadly`'s field table marked everything after `0x23` as
-unknown, and `kennethreitz`'s `PROTOCOL.md` did not cover that region — we only dared judge
-"something should be here" on the back of those two public efforts.
+**The order of events needs to be stated precisely**: when we started, we had **not** read
+`hid_reports.md` — otherwise the "two independent paths" claim in 5.1 would not hold. What started it
+was internal process: the protocol doc was going to say "these 29 bytes can be ignored", and the word
+"ignore" has to be falsified before it may be written.
+
+Reading `ndeadly`'s field table happened **after every calibration was finished, while preparing the
+issue**. Its role was to **confirm we were not first** (and incidentally explain why three fields had
+been sliced at the wrong offset) — not to point us anywhere. Getting that order backwards would void
+the "independent verification" claim, which is one of the few genuinely load-bearing arguments here.
 
 ---
 
