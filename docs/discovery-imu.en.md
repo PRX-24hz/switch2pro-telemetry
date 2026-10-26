@@ -684,7 +684,7 @@ What is still new here:
 
 | Increment | Detail |
 |---|---|
-| **Axis mapping and sign** | `hid_reports.md` explicitly says this is "not documented, must be determined empirically". This document supplies the X/Y/Z orientation and signs from six-face calibration (5.1) |
+| **Axis mapping and sign** | `hid_reports.md` gives only the data type and range (`Signed 16-bit LE`, ±8 G / ±2000 dps); it **does not record which direction each axis points or what the sign means**. This document supplies the X/Y/Z orientation and signs from six-face calibration (5.1) |
 | **Measured sensitivity and bias** | The documentation gives nominal values (4095.875 LSB/g / 16.3835 LSB/dps); this document gives measured values from one unit (−1.0 % / +0.3 %) |
 | **Offset-base correction for the whole frame** | The ±1 offset caused by the report ID, and the re-identification of three previously misjudged fields (6.1, 6.2) |
 | **Independent verification of the activation sequence** | Captured on Windows 11 with Steam, matching `commands.md` command for command (8.1b) |

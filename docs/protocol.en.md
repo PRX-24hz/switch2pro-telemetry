@@ -118,7 +118,7 @@ IMU all in one report, all reachable by read-only polling. `0x09` is not require
 
 > How this was established, the six-face calibration, and why the data was briefly retracted and then
 > restored: [`discovery-imu.en.md`](discovery-imu.en.md).
-> The axis-orientation item is marked "to be determined empirically" upstream; our result was submitted
+> The axis-orientation item is not recorded upstream (only the data type and range are); our result was submitted
 > to `ndeadly/switch2_controller_research` (issue #2) for cross-checking.
 
 ### 1.5 Activation: why "opening the device" is not enough

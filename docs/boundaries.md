@@ -123,7 +123,8 @@ L4  固件 / OTA                    ← 未触及，需写且不可逆
 读数不是电压、摇杆只用掉 86% 量程、尾部 29 字节是时间戳 + 温度 + 六轴。
 **换句话说：结构是继承的，行为是实测的。** 这个区分决定了这篇报告该被怎么引用。
 
-**回馈**：`hid_reports.md` 把 IMU 轴方向与符号标为「需实测确定」，我们补上后提交为
+**回馈**：`hid_reports.md` 给了 IMU 的类型与量程（`Signed 16-bit LE`、±8 G / ±2000 dps），
+但**未记载各轴的物理指向与符号含义**；我们补上这一项后提交为
 [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2)，
 附六面原始数据。激活命令序列的解读同样来自该仓库的 `commands.md`——
 我们只做了独立验证（抓包 + 逐条对照），没有重新发明。

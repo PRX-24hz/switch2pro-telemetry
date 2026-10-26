@@ -134,8 +134,9 @@ voltage, the sticks using only 86 % of the range, and the trailing 29 bytes bein
 temperature + six axes. **The structure is inherited; the behaviour is measured.** That distinction
 determines how this report should be cited.
 
-**Giving back**: `hid_reports.md` marks the IMU axis orientation and sign convention as "to be
-determined empirically"; we determined it and submitted the result as
+**Giving back**: `hid_reports.md` gives the IMU's data type and range (`Signed 16-bit LE`, ±8 G /
+±2000 dps) but **does not record which direction each axis points or what the sign means**; we
+determined that and submitted the result as
 [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2)
 with the raw six-face data. The activation command sequence is likewise read from that repo's
 `commands.md` — we only verified it independently (capture + line-by-line cross-check), we did not

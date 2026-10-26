@@ -286,8 +286,8 @@ efforts. Without them we would not even know which bytes to read:
 The clock-wrap constant, status bitfields, full charging cycle, reading sawtooth, stick range,
 the rumble A/B and the six-face IMU calibration were measured independently for this repo.
 
-**Giving back upstream**: `hid_reports.md` marks the IMU axis orientation and sign convention as
-"to be determined empirically". We determined it, and submitted the result to
+**Giving back upstream**: `hid_reports.md` gives the IMU's data type and range but **does not record
+which direction each axis points or what the sign means**. We determined that, and submitted the result to
 [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2)
 with the six-face raw data for cross-checking. That thread also records how we briefly retracted the
 conclusion and then restored it through controlled experiments.

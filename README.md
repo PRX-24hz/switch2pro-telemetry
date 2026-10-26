@@ -270,7 +270,7 @@ tools/write/                            # ⚠ 会写设备，隔离存放，默�
 时钟回绕常数、状态位域、完整充电周期、读数锯齿、摇杆量程、震动 A/B 与 IMU 六面标定
 为本仓库独立实测得出。
 
-**回馈上游**：`hid_reports.md` 把 IMU 的轴方向与符号标为「需实测确定」，我们补上了这一项，
+**回馈上游**：`hid_reports.md` 给了 IMU 的类型与量程，但**未记载各轴的物理指向与符号含义**；我们补上了这一项，
 已提交至 [`ndeadly/switch2_controller_research` issue #2](https://github.com/ndeadly/switch2_controller_research/issues/2)，
 附六面原始数据供交叉核对。那段讨论里还能看到我们一度把结论作废、又用对照实验恢复的完整过程。
 

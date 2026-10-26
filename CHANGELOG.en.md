@@ -90,6 +90,15 @@ boundary was redrawn.**
   the order backwards voids it.
 - **Dependency boundary made explicit**: `docs/boundaries.md` §2.2 now states that what came from prior
   work is only *where the fields are* (structure), while *how they behave over time* is all measured.
+- **Retracted a fabricated quotation (important)**: eight places (4 Chinese, 4 English) described
+  `hid_reports.md` as marking the IMU axis orientation and sign convention "to be determined
+  empirically" — two of them in quotation marks or blockquotes. Checking the source: **that document
+  contains no sentence about axis orientation or sign conventions at all**; the line was a retrieval
+  summary mistaken for a quotation. All eight now make a plain statement ("gives only the data type
+  and range ... does not record which direction each axis points or what the sign means") without
+  quote marks. The conclusion — that this is our increment — still holds, but the argument now rests
+  on our own observation rather than on an alleged gap in their text. The same error is in the already
+  published upstream issue #2 and must be fixed by hand.
 - **§2.3 now states which code is being compared**: `firmware/esp32s3_switch2_bridge/` is marked by its
   author as historical reference only, and the shipping product is the pure-software v2.0. The text
   read as a comparison against "their current implementation" when it actually compares the 2026-05

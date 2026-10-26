@@ -113,7 +113,7 @@ IMU 换算用**实测标定值**，不是标称值：
 
 > 判定依据、六面标定过程、以及这批数据为什么一度被作废又恢复，见
 > [`discovery-imu.md`](discovery-imu.md)。
-> 轴方向与符号这一项，上游 `hid_reports.md` 标注为「需实测」，我们的结果已提交至
+> 轴方向与符号这一项上游 `hid_reports.md` 未记载（只给了类型与量程），我们的结果已提交至
 > `ndeadly/switch2_controller_research`（issue #2）供交叉核对。
 
 ### 1.5 激活：为什么「打开设备」还不够
