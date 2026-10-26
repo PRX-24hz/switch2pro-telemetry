@@ -81,6 +81,10 @@ boundary was redrawn.**
 - New `docs/discovery-imu.md` (zh/en): how the discovery happened, the method, and a post-mortem of
   three wrong attributions.
 - `data/DEVICE.md`: Hong Kong model, two-hub topology, 2026-10-25 timeline, activation precondition.
+- `docs/boundaries.md` gains §2.3: field-by-field comparison with the BLE-side project
+  `XinHeLianSheng-Pro2-Bridge` (report layout / IMU sample order / microsecond timestamp / button bit
+  order all match), plus a note on its 4095-based stick normalisation; also rewords one claim — the
+  firmware version is not "unreadable", it is "unreadable over the read-only HID channel".
 - `docs/boundaries.md` gains §2.1 "Why 'no prior record found' is not 'first on the internet'":
   four structural blind spots (NDA work, private communities, naming/PID differences, and the limits
   of our own search), plus why the repo refuses to write "first discovered".

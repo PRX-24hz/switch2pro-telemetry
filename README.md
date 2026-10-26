@@ -263,7 +263,9 @@ tools/write/                            # ⚠ 会写设备，隔离存放，默�
 - `dekuNukem`（初代 Pro 协议）—— 报告结构与按键位域的先导；
 - `darthcloud/BlueRetro #1249`—— 复合设备接口与枚举的交叉印证；
 - Linux 内核 `hid-nintendo` 与合入 7.4 的 Switch 2 初始驱动、`HIDMaestro`、SDL/Steam 侧实现——
-  提供"正规路径走 `0x09`"的对照，反衬出本文"只读替代方案"的边界。
+  提供"正规路径走 `0x09`"的对照，反衬出本文"只读替代方案"的边界；
+- `LeonChrome/XinHeLianSheng-Pro2-Bridge`——BLE 侧的桥接实现，其虚拟 Nintendo 报告布局与本仓库
+  实测逐字段吻合（详见 [`docs/boundaries.md` §2.3](docs/boundaries.md)），是**先测后遇**的独立复现。
 
 时钟回绕常数、状态位域、完整充电周期、读数锯齿、摇杆量程、震动 A/B 与 IMU 六面标定
 为本仓库独立实测得出。

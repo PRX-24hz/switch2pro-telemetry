@@ -129,3 +129,38 @@ determined empirically"; we determined it and submitted the result as
 with the raw six-face data. The activation command sequence is likewise read from that repo's
 `commands.md` — we only verified it independently (capture + line-by-line cross-check), we did not
 reinvent it.
+
+### 2.3 A BLE-side implementation: complementary, and mutually verifiable
+
+[`LeonChrome/XinHeLianSheng-Pro2-Bridge`](https://github.com/LeonChrome/XinHeLianSheng-Pro2-Bridge)
+(C# / Apache-2.0, since 2026-05, ~78 stars) does the **other half**: it connects the Pro2 over **BLE**
+to Windows and presents it as a virtual USB pad (Pro1 / Xbox / PS5). This repo does **USB read-only
+observation**; the two do not overlap, yet its virtual Nintendo report layout matches our measurements
+**field for field**.
+
+**Three independent agreements** (they do not cite us, and they started earlier):
+
+| Item | Their implementation | This repo, measured |
+|---|---|---|
+| Report layout | buttons `5/6/7/8`, left stick `11..13`, right stick `14..16` | identical ([Protocol §1.1](protocol.en.md)) |
+| IMU sample | 12 bytes: accel first at `+0/+2/+4`, gyro at `+6/+8/+10`, int16 LE | identical (`0x31`–`0x3C`) |
+| Timestamp | 4 bytes LE, **microseconds** | identical (`0x2B`–`0x2E`) |
+| Button bit order | in their `fd2` bitmap `C=0x4000`, `GR` before `GL`, the four SL/SR bits skipped | bit-for-bit identical to §2.2 |
+
+> **Why this matters here**: this repo measured the layout **first and found that project later**.
+> The order is what counts — it means the agreement is not copying, but two measurements of the same
+> hardware. It also confirms §2.1 again: we are not first; someone was already handling this same
+> motion data in 2026-05.
+
+**Two differences worth flagging** (not nitpicking — it saves the next reader some time):
+
+1. **Stick normalisation**: they use `(value − 2048) / 16`, clamped to ±127, i.e. assume full scale
+   `0..4095`. With our measured radius (1,765 / 1,810) full deflection only reaches **≈110/127**, i.e.
+   **86 %**. That is exactly the trap [Protocol §2](protocol.en.md) describes; their v2.0 notes show
+   they fixed "stick range" for Pro1 mode, in the same direction.
+2. **Firmware version**: they can display it (read via the command channel). Which tells us something —
+   the firmware version is **not unreadable, it is unreadable over the read-only HID channel**; sending
+   subcommand `0x02` on the activation channel (`MI_01`) gets it. That is why
+   [`data/DEVICE.md`](../data/DEVICE.md) uses `bcdDevice = 0x0201` as a *substitute*, worded as
+   "readable read-only", never as "the only thing readable".
+

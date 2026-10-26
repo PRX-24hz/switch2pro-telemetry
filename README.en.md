@@ -278,7 +278,10 @@ efforts. Without them we would not even know which bytes to read:
 - `darthcloud/BlueRetro #1249` — cross-check on composite interfaces and enumeration;
 - the Linux `hid-nintendo` driver and the initial Switch 2 driver merged in 7.4, plus `HIDMaestro`
   and the SDL/Steam implementations — the "official path via `0x09`" against which this repo's
-  read-only substitute is bounded.
+  read-only substitute is bounded;
+- `LeonChrome/XinHeLianSheng-Pro2-Bridge` — a BLE-side bridge whose virtual Nintendo report layout
+  matches our measurements field for field (see [`docs/boundaries.en.md` §2.3](docs/boundaries.en.md));
+  measured first here, found afterwards.
 
 The clock-wrap constant, status bitfields, full charging cycle, reading sawtooth, stick range,
 the rumble A/B and the six-face IMU calibration were measured independently for this repo.
