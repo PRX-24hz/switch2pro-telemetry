@@ -90,6 +90,12 @@ boundary was redrawn.**
   the order backwards voids it.
 - **Dependency boundary made explicit**: `docs/boundaries.md` §2.2 now states that what came from prior
   work is only *where the fields are* (structure), while *how they behave over time* is all measured.
+- **§2.3 now states which code is being compared**: `firmware/esp32s3_switch2_bridge/` is marked by its
+  author as historical reference only, and the shipping product is the pure-software v2.0. The text
+  read as a comparison against "their current implementation" when it actually compares the 2026-05
+  ESP32 firmware. The stick-normalisation item moved from "difference flagged" to "suggestion
+  withdrawn" — v2.0 fixed it independently (keeping the controller's own calibration), and our quote
+  came from archived code. The unverified escape hatch is recorded as well.
 - `docs/boundaries.md` gains §2.3: field-by-field comparison with the BLE-side project
   `XinHeLianSheng-Pro2-Bridge` (report layout / IMU sample order / microsecond timestamp / button bit
   order all match), plus a note on its 4095-based stick normalisation; also rewords one claim — the

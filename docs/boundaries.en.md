@@ -146,10 +146,21 @@ reinvent it.
 [`LeonChrome/XinHeLianSheng-Pro2-Bridge`](https://github.com/LeonChrome/XinHeLianSheng-Pro2-Bridge)
 (C# / Apache-2.0, since 2026-05, ~78 stars) does the **other half**: it connects the Pro2 over **BLE**
 to Windows and presents it as a virtual USB pad (Pro1 / Xbox / PS5). This repo does **USB read-only
-observation**; the two do not overlap, yet its virtual Nintendo report layout matches our measurements
-**field for field**.
+observation**; the two do not overlap.
 
-**Three independent agreements** (they do not cite us, and they started earlier):
+> **Which code is being compared matters here.** The project currently ships a pure-software v2.0
+> (Windows + VIIPER backend), and its `source/` README states explicitly that `firmware/`, `pico/` and
+> the three-in-one directories are **kept for historical reference only**. What we read,
+> `firmware/esp32s3_switch2_bridge/main/bridge/report_mapper.c`, belongs to that **archived ESP32
+> firmware (V5.9 era)** — not to what v2.0 actually runs.
+>
+> It is still worth comparing, because that firmware was decoded **by the author from BLE**, wholly
+> independent of our USB-side measurements; but treating it as "their current implementation" leads to
+> wrong conclusions — which is exactly the mistake we made while preparing a suggestion to that project
+> (see the stick item below).
+
+**Four independent agreements** (against the archived ESP32 firmware above; they do not cite us, and
+they started earlier):
 
 | Item | Their implementation | This repo, measured |
 |---|---|---|
@@ -163,12 +174,22 @@ observation**; the two do not overlap, yet its virtual Nintendo report layout ma
 > hardware. It also confirms §2.1 again: we are not first; someone was already handling this same
 > motion data in 2026-05.
 
-**Two differences worth flagging** (not nitpicking — it saves the next reader some time):
+**Two details worth recording**:
 
-1. **Stick normalisation**: they use `(value − 2048) / 16`, clamped to ±127, i.e. assume full scale
-   `0..4095`. With our measured radius (1,765 / 1,810) full deflection only reaches **≈110/127**, i.e.
-   **86 %**. That is exactly the trap [Protocol §2](protocol.en.md) describes; their v2.0 notes show
-   they fixed "stick range" for Pro1 mode, in the same direction.
+1. **Stick normalisation — retracted, but the process is worth keeping.** The archived firmware's
+   `axis12_to_i8()` uses `(value − 2048) / 16`, clamped to ±127, i.e. assumes full scale `0..4095`.
+   With our measured radius (1,765 / 1,810), full deflection only reaches **≈110/127**, i.e. **86 %**
+   — exactly the trap [Protocol §2](protocol.en.md) describes.
+
+   **We drafted this as a suggestion to that project and then withdrew it.** The v2.0 changelog reads
+   "corrected Pro1 stick calibration range, removed the extra centre snapping at the output, **kept the
+   controller's own calibration**" — precisely what our measurements support, so they had already fixed
+   it themselves. And what I had quoted was code the author marks as historical reference only.
+
+   > Lesson: before advising an external project, confirm **the quoted code is still on the shipping
+   > path**. That is one request away — yet the draft contained the caveat "if they run a different
+   > mapping" and nobody went to check whether that caveat was live. The escape hatch was written, and
+   > then left unopened.
 2. **Firmware version**: they can display it (read via the command channel). Which tells us something —
    the firmware version is **not unreadable, it is unreadable over the read-only HID channel**; sending
    subcommand `0x02` on the activation channel (`MI_01`) gets it. That is why
