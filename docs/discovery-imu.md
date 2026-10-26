@@ -396,10 +396,13 @@ Steam 的「陀螺仪校准」页面在静止时显示三轴在 **−0.1 ~ +0.1 
 
 | 基准 | 长度 | 说明 |
 |---|---|---|
-| `ndeadly` 的 `hid_reports.md` | 63 字节 | HID **载荷**，`0x00` 是计数器首字节 |
+| `ndeadly` 的 `hid_reports.md` | 63 字节※ | HID **载荷**，`0x00` 是计数器首字节 |
 | 本文 / hidapi | 64 字节 | 包含 report ID，`buf[0]` = `0x05` |
 
 **换算：本文偏移 = 文档偏移 + 1。**
+
+> ※ 这个 63 是**我们算的**（64 字节 − 1 个 report ID），文档本身没有写长度。
+> 判断依据只有一条：文档说 `0x00` 是计数器首字节，而 hidapi 的 `buf[0]` 是 report ID。
 
 | 本文偏移 | 文档偏移 | 字段 | 状态 |
 |---|---|---|---|
@@ -531,13 +534,13 @@ Z 轴四个样本给出 14.8~21.4 LSB/(°/s) 的离散，比 X 轴的 16.1~17.7 
 
 | 偏移 | 字段 | 取值 |
 |---|---|---|
-| 0x0 | Command ID | `0x01`~`0x18` |
+| 0x0 | Command ID | `0x01`~`0x18`（文档逐条枚举，其中 `0x04` / `0x0E` / `0x12` 标为 unused） |
 | 0x1 | Direction | **`0x91` = 主机→设备**，`0x01` = 设备→主机 |
 | 0x2 | Transport | **`0x00` = USB**，`0x01` = 蓝牙 |
 | 0x3 | Subcommand | |
 | 0x4 | Unknown | |
-| 0x5 | Data Length | |
-| 0x6–7 | Reserved | `00 00` |
+| 0x5 | Data Length / ACK | 请求帧 = 后续数据长度；响应帧 = ACK |
+| 0x6–7 | Reserved | 恒 `00 00`（文档推测仅为补齐到 8 字节） |
 
 #### 四类关键命令
 
@@ -565,19 +568,30 @@ USBPcap 抓到的 19 条命令（`activate_capture.pcap`），时间集中在 `t
 共 107 毫秒内，`0x05` 首帧出现在 `t=17.333`（间隔 4 ms）：
 
 ```
-02 91 00 01 …  ×7        握手/轮询
-07 91 00 01 …            初始化首条
-0c 91 00 02 | 27 00 00 00   设置特征掩码
-0a 91 00 08 …            振动使能
-0c 91 00 04 | 27 00 00 00   使能特征
-01 91 00 0c …            HOME 灯
-01 91 00 01 …            握手
-08 91 00 02 …            子命令
-03 91 00 0a | 05 00 00 00   选择报告 0x05   ← 报告流从这里开始
-03 91 00 0d | 01 00 ff…     初始化 USB
+字节                         Command / Subcommand                    作用
+02 91 00 01 …  ×7            cmd 0x02 (Flash Memory) / sub 0x01      文档未解，见下注
+07 91 00 01 …                cmd 0x07 (Unknown)      / sub 0x01     文档未解
+0c 91 00 02 | 27 00 00 00    cmd 0x0C / sub 0x02                     Set feature mask
+0a 91 00 08 …                cmd 0x0A (Vibration)    / sub 0x08      —
+0c 91 00 04 | 27 00 00 00    cmd 0x0C / sub 0x04                     Enable features
+01 91 00 0c …                cmd 0x01 (NFC)          / sub 0x0C      —
+01 91 00 01 …                cmd 0x01 (NFC)          / sub 0x01      —
+08 91 00 02 …                cmd 0x08 (Charging Grip)/ sub 0x02      —
+03 91 00 0a | 05 00 00 00    cmd 0x03 / sub 0x0A                     Select input report 0x05
+03 91 00 0d | 01 00 ff…      cmd 0x03 / sub 0x0D                     Initialise USB
 ──────────────────────────  4 ms 后
-05 8e 3b 00 …            第一条 0x05
+05 8e 3b 00 …                第一条 0x05
 ```
+
+> **标签按 `commands.md` 的 Command Types 表填，我们不再自己猜。** 早期版本给这几条贴过
+> "握手""HOME 灯"之类的名字，那是从 Switch 1 协议搬来的，与这里的帧结构无关——
+> `data[0]` 是 **Command ID**，不是 Switch 1 的 report ID。凡是文档标 `Unknown` 的，
+> 本文也留空，不替它填。
+>
+> **一个反证**：`commands.md` 里还有一条 `0x03 / 0x03 = Enable USB HID reports`，
+> 单看名字像是最直接的开关。但**我们的抓包里没有它**，Steam 只发了 `0x03/0x0A` 与 `0x03/0x0D`，
+> 报告照常出现。所以"启用 USB HID 报告"**不是必要条件**，`0x03/0x0D`（Initialise USB）才是——
+> 这与文档对该子命令的注解完全一致：*"Required before the controller will send input reports over USB."*
 
 顺序、长度、subcmd 与 `commands.md` 完全对得上。**这份抓包可以当作对那份文档的
 一份独立验证**——它是在 Windows 11 + Steam 环境下抓的，属于不同的观测条件。

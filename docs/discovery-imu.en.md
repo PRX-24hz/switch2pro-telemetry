@@ -420,10 +420,14 @@ Radians: w[rad/s] = raw / 938.7
 
 | Base | Length | Meaning |
 |---|---|---|
-| `ndeadly`'s `hid_reports.md` | 63 bytes | HID **payload**, `0x00` is the first byte of the counter |
+| `ndeadly`'s `hid_reports.md` | 63 bytes* | HID **payload**, `0x00` is the first byte of the counter |
 | This document / hidapi | 64 bytes | includes the report ID, `buf[0]` = `0x05` |
 
 **Conversion: offset here = offset in that document + 1.**
+
+> \* That 63 is **our arithmetic** (64 bytes − 1 report ID); the document states no length at all.
+> The only evidence is that it calls `0x00` the first byte of the counter, while hidapi's `buf[0]`
+> is the report ID.
 
 | Offset here | Offset there | Field | Status |
 |---|---|---|---|
@@ -571,13 +575,13 @@ isn't wired to that channel at all.
 
 | Offset | Field | Value |
 |---|---|---|
-| 0x0 | Command ID | `0x01`–`0x18` |
+| 0x0 | Command ID | `0x01`–`0x18` (enumerated in the doc; `0x04` / `0x0E` / `0x12` marked unused) |
 | 0x1 | Direction | **`0x91` = host→device**, `0x01` = device→host |
 | 0x2 | Transport | **`0x00` = USB**, `0x01` = Bluetooth |
 | 0x3 | Subcommand | |
 | 0x4 | Unknown | |
-| 0x5 | Data Length | |
-| 0x6–7 | Reserved | `00 00` |
+| 0x5 | Data Length / ACK | request = length of data to follow; response = ACK |
+| 0x6–7 | Reserved | always `00 00` (doc guesses it is padding to 8 bytes) |
 
 #### Four commands that matter
 
@@ -606,19 +610,31 @@ USBPcap captured 19 commands (`activate_capture.pcap`), all within `t=17.222–1
 — 107 ms — with the first `0x05` at `t=17.333` (4 ms later):
 
 ```
-02 91 00 01 …  ×7           handshake / polling
-07 91 00 01 …               first init command
-0c 91 00 02 | 27 00 00 00   set feature mask
-0a 91 00 08 …               rumble enable
-0c 91 00 04 | 27 00 00 00   enable features
-01 91 00 0c …               HOME LED
-01 91 00 01 …               handshake
-08 91 00 02 …               subcommand
-03 91 00 0a | 05 00 00 00   select report 0x05   <- stream starts here
-03 91 00 0d | 01 00 ff…     initialise USB
+bytes                       Command / Subcommand                    Purpose
+02 91 00 01 …  ×7           cmd 0x02 (Flash Memory) / sub 0x01      not decoded in the doc
+07 91 00 01 …               cmd 0x07 (Unknown)      / sub 0x01      not decoded in the doc
+0c 91 00 02 | 27 00 00 00   cmd 0x0C / sub 0x02                     Set feature mask
+0a 91 00 08 …               cmd 0x0A (Vibration)    / sub 0x08      —
+0c 91 00 04 | 27 00 00 00   cmd 0x0C / sub 0x04                     Enable features
+01 91 00 0c …               cmd 0x01 (NFC)          / sub 0x0C      —
+01 91 00 01 …               cmd 0x01 (NFC)          / sub 0x01      —
+08 91 00 02 …               cmd 0x08 (Charging Grip)/ sub 0x02      —
+03 91 00 0a | 05 00 00 00   cmd 0x03 / sub 0x0A                     Select input report 0x05
+03 91 00 0d | 01 00 ff…     cmd 0x03 / sub 0x0D                     Initialise USB
 ──────────────────────────  4 ms later
 05 8e 3b 00 …               first 0x05
 ```
+
+> **Labels come from `commands.md`'s Command Types table; we no longer guess them.** Earlier
+> versions labelled several of these "handshake" or "HOME LED" — names carried over from the
+> Switch 1 protocol and unrelated to this frame: `data[0]` is the **Command ID**, not a Switch 1
+> report ID. Where the document says `Unknown`, we leave it blank rather than fill it in.
+>
+> **A useful counter-example**: `commands.md` also lists `0x03 / 0x03 = Enable USB HID reports`,
+> which by its name looks like the most direct switch. **It does not appear in our capture** —
+> Steam sends only `0x03/0x0A` and `0x03/0x0D`, and the stream starts anyway. So "enable USB HID
+> reports" is **not** a necessary condition; `0x03/0x0D` (Initialise USB) is — matching the
+> document's own note: *"Required before the controller will send input reports over USB."*
 
 Order, lengths and subcommands all line up with `commands.md`. **This capture can serve as
 an independent verification of that document** — it was taken on Windows 11 with Steam

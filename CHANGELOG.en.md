@@ -90,6 +90,20 @@ boundary was redrawn.**
   the order backwards voids it.
 - **Dependency boundary made explicit**: `docs/boundaries.md` §2.2 now states that what came from prior
   work is only *where the fields are* (structure), while *how they behave over time* is all measured.
+- **`commands.md` re-checked verbatim**: the 8-byte command header and the four key subcommands all
+  match — `0x03/0x0A`=Select input report, `0x0C/0x02`=Set feature mask, `0x0C/0x04`=Enable features,
+  `0x03/0x0D`=Initialise USB (annotated "Required before the controller will send input reports over
+  USB"). Three places stated more than the source does and were tightened: the Command ID range is now
+  "enumerated in the doc", `0x5` regained its `/ACK` half, and `63 bytes` is marked as **our
+  arithmetic** (the document states no length).
+- **Wrong labels in the capture timeline fixed**: names like "handshake" and "HOME LED" came from the
+  **Switch 1** protocol and do not apply here (`data[0]` is a Command ID, not a Switch 1 report ID).
+  All entries now read `cmd 0x0X / sub 0x0Y` with the document's own name; where the doc says
+  `Unknown`, we leave it blank.
+- **New counter-evidence from our capture**: `commands.md` lists `0x03/0x03 = Enable USB HID reports`,
+  which by name looks like the master switch — but **it never appears in our capture**. Steam sends
+  only `0x03/0x0A` and `0x03/0x0D`, and the stream starts anyway. So it is not a necessary condition;
+  `0x03/0x0D` is, matching the document's own note.
 - **Retracted a fabricated quotation (important)**: eight places (4 Chinese, 4 English) described
   `hid_reports.md` as marking the IMU axis orientation and sign convention "to be determined
   empirically" — two of them in quotation marks or blockquotes. Checking the source: **that document

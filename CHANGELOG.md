@@ -72,6 +72,17 @@
   这条重要，因为"独立验证"是本文少数真正站得住的论据，时间线写反就把它废掉了。
 - **明确依赖边界**：`docs/boundaries.md` §2.2 补一段——从前人那里拿的只有"字段在哪"（结构），
   "字段随时间怎么变"（行为）全部是自测。
+- **回归核对 `commands.md`（逐字对照原文）**：命令帧 8 字节头与四类关键命令的语义**全部对上**——
+  `0x03/0x0A`=Select input report、`0x0C/0x02`=Set feature mask、`0x0C/0x04`=Enable features、
+  `0x03/0x0D`=Initialise USB（原文注 "Required before the controller will send input reports over USB"）。
+  顺带修掉三处"比原文更绝对"的写法：Command ID 范围改为"文档逐条枚举"、`0x5` 补回 `/ACK`、
+  `63 字节`标注为**我们的计算**（文档未写长度）。
+- **修正时序表里的一批错标签**：早期给抓包命令贴的"握手""HOME 灯"是从 **Switch 1** 协议搬来的，
+  与这里的帧结构无关（`data[0]` 是 Command ID，不是 Switch 1 的 report ID）。已全部改为
+  `cmd 0x0X / sub 0x0Y` 并附文档里的名称；文档标 `Unknown` 的我们也留空，不替它填。
+- **新增一条实测反证**：`commands.md` 有 `0x03/0x03 = Enable USB HID reports`，名字最像总开关，
+  但**我们的抓包里没有它**——Steam 只发 `0x03/0x0A` 与 `0x03/0x0D`，报告照常出现。
+  所以它不是必要条件，`0x03/0x0D` 才是，与文档注解一致。
 - **撤回一处伪造引用（重要）**：仓库里有 8 处（中 4 / 英 4）把 `hid_reports.md` 描述成
   「把 IMU 轴方向与符号标为需实测确定」，其中 2 处用了引号或引用块。核对原文后确认：
   **该文档全篇没有任何关于轴方向或符号约定的句子**，这句话是检索摘要被当成了原文。
