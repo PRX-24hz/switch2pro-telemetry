@@ -9,6 +9,41 @@
 
 > [中文](README.md) · **English** · **v1.0 (2026-10-25)**
 
+---
+
+## Quick reference
+
+> Offsets are for a 64-byte buffer where `buf[0]` is report ID `0x05` — the table **includes** it.
+
+| Offset | Field | Notes |
+|---|---|---|
+| `0x01`–`0x04` | Session Clock | u32 LE, millisecond counter, +4 per frame, **wraps at 1,432 s** |
+| `0x05`–`0x08` | Button bitfield | 32 bit: face / shoulder / ZL·ZR / D-pad / stick click / back paddles GL·GR |
+| `0x0B`–`0x0D` | Left stick | two 12-bit values packed into 3 bytes |
+| `0x0E`–`0x10` | Right stick | same |
+| `0x20:0x21` | Gauge reading | u16 LE. **Not a voltage** — do not run it through a Li-ion curve |
+| `0x22` | Charge status | bitfield: b5 = external power present, b2 = charging current flowing |
+| `0x23`–`0x2A` | Reserved | always `0` |
+| `0x2B`–`0x2E` | Timestamp | u32 LE, **microseconds**, +3,750 or +5,000 per frame |
+| `0x2F:0x30` | Temperature | int16 LE, `T = 25 + raw/126.9` |
+| `0x31`–`0x3C` | 6-axis IMU | 6 × int16 LE, **accel first, gyro second** |
+
+`0x11`–`0x1F` (between the sticks and the gauge) is not covered here; `0x3D`–`0x3F` is always `0`.
+
+```text
+a[g]   = raw / 4090                 accelerometer  ±8 g       measured 4090.8 / 4090.7 / 4096.3
+w[dps] = (raw - bias) / 16.384      gyroscope      ±2000 dps  bias ≈ 8 / 3 / 7
+```
+
+**Two traps worth knowing up front**
+
+1. Full stick deflection reaches a radius of only ~**1,765** (86 % of the range). Normalise by 4,095 and it will **never reach 1.0**.
+2. The device must be **activated once** before it sends anything. `open` alone gives you **0 frames** — not a broken library.
+
+→ Full field table [`docs/protocol.en.md`](docs/protocol.en.md) · IMU calibration and axes [`docs/discovery-imu.en.md`](docs/discovery-imu.en.md) · activation precondition in [`protocol.en.md`](docs/protocol.en.md) 1.5
+
+---
+
 Every conclusion below comes from **captures on real hardware** (20+ hours, 400k+ frames),
 not from second-hand documentation.
 

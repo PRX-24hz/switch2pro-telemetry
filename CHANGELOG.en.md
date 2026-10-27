@@ -7,6 +7,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ---
 
+## Unreleased · README above-the-fold rework
+
+- **Added a "Quick reference" block** (both languages): a 9-row field table, two conversion
+  formulas, and the two traps people hit first (sticks reach only 86 % of the range; the device
+  must be activated once). The motivation was concrete: someone writing a bridge or a driver opens
+  the repo wanting to know how to turn `0x31` into g, not how rigorous we are. The old first screen
+  was all methodology — you had to scroll past eight "core facts" to reach a field table.
+- The block **points rather than duplicates**: every row links to the matching section in
+  `docs/protocol.en.md` or `docs/discovery-imu.en.md`.
+- `0x11`–`0x1F` is now marked as not covered, rather than letting the table imply completeness.
+
 ## v1.0 · 2026-10-25
 
 First proper release. Compared with the earlier drafts, **one core fact was overturned and one
